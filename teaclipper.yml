@@ -1,0 +1,27 @@
+name: teclipper
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11    # Specify the Python version you want
+  - numpy
+  - pandas
+  - matplotlib
+  - cxx-compiler   # Explicitly request the C++ compiler (for Clang on macOS)
+  - c-compiler     # Explicitly request the C compiler
+  - astropy
+  - astroquery
+  - joblib
+  - lightkurve
+  - peakutils
+  - scipy
+  - tqdm
+  - IPython
+  - ipympl
+  - numba
+  - h5py
+  - arviz
+  - corner
+  - lmfit
+  - tk
+  - spyder-kernels=3.0

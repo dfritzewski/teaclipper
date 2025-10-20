@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct 17 13:47:25 2025
+
+@author: dario (dario.fritzewski@kuleuven.be)
+"""
+
+from . import interactiveAmigo
+
+
+def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='./STS/',
+                analysis_file=2, pattern_path='amigo_good'):
+    '''
+    Loop through all stars given in the TICs list to find and fit period spacing patterns
+    with AMiGO.
+
+    Parameters
+    ----------
+    TICs : list-like
+        All TIC IDs to consider.
+    LCdir : str, optional
+        Path to the parent directory of your TESSutils reduction. The default is './TU/'.
+    red_name : str, optional
+        The name of your TU reduction trailing every directory in your LCdir. The default is ''.
+    version : str, optional
+        Which version of the light curve to read. Either 'TU' meaning the raw LC as produced
+        by TESSutils, or 'detrended' meaining the LC after polynomial detrending. The default
+        is 'TU'.
+    STSdir : str, optional
+        Path to the star shadow put. The code assumes the same filename structure as the
+        lightcurves. The default is './STS/'.
+    analysis_file : int, optional
+        Highest executed step in the star shadow analysis. Set to 2 for only pre-whitening,
+        or to 5 for the full eclipsing binary chain. The default is 5.
+    pattern_path : str, optional
+        Path to directory that (will) store the AMiGO results.
+        The default is './AMiGO_patterns/'.
+
+    Returns
+    -------
+    None.
+
+    '''
+    # load the GUI
+    amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path='amigo_good')
+
+    # loop through all TICs
+    for TIC in TICs:
+        try:
+            star = interactiveAmigo.StarData(TIC, LCdir=LCdir, red_name=red_name, STSdir=STSdir,
+                                             version=version, analysis_file=analysis_file)
+        except FileNotFoundError:
+            print(f'TIC {TIC} could not be found. Skipping.')
+            continue
+        # call the analysis
+        amigo_gui.make_analysis(star)
