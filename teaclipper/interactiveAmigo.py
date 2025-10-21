@@ -11,7 +11,7 @@ import warnings
 import os
 import copy
 import ast
-from importlib_resources import files
+from importlib.resources import files
 from pathlib import Path
 
 import numpy as np
@@ -74,7 +74,7 @@ class AMiGO_data:
             print(f'Read existing AMiGO file at {self.pattern_path}')
         except FileNotFoundError:
             self.obsstar = None
-            print('Failed to reading existing AMiGO results. Initialize empty object.')
+            print('Did not find existing AMiGO results. Initializing empty object.')
 
         # extract all info if obstar exists
         if self.obsstar is not None:

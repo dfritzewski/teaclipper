@@ -16,7 +16,7 @@ from . import LCcheckGUI
 from . import prewhitenSTS
 from . import findPatterns
 
-TICs = [305906846]
+TICs = [374944608]
 red_name = 'example'
 
 if __name__ == "__main__":
@@ -26,10 +26,10 @@ if __name__ == "__main__":
     # plot light curves and see how much we still have to detrend them
     LCcheckGUI.launch_lc_review_gui(TICs, red_name=red_name, version='TU')
 
-    # additional polynomial detrending
+    # additional, optional, polynomial detrending
     detrendLCs.all_poly_detrend(TICs, red_name=red_name)
 
-    # Check LCs again
+    # Check LCs again, optional.
     LCcheckGUI.launch_lc_review_gui(TICs, red_name=red_name)
 
     # pre-whiten frequencies with Star Shadow

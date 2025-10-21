@@ -238,7 +238,8 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
                 return
 
             pg = lc.to_periodogram()
-            sector_borders, sectors = utils.get_sectors_dates(lc.time.value, return_numbers=True)
+            sector_borders, sectors = utils.get_sectors_dates(lc.time.value, return_numbers=True,
+                                                              split='Sector')
 
             s_time = np.split(lc.time, sector_borders)
             s_flux = np.split(lc.flux, sector_borders)

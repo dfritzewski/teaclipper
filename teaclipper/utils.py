@@ -240,12 +240,16 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
         if b - 1 in borders:  # avoid the same for the final missing sector
             continue
         borders.append(b)
-        sector_numbers.append(row['Sector'])
+        sector_numbers.append(int(row['Sector']))
 
     # add the final sector number
     final_sector = timedf[(timedf.startJD < time[borders[-1] + 1]) &
                           (timedf.endJD >= time[-1])].Sector.iloc[0]
-    sector_numbers.append(final_sector)
+    sector_numbers.append(int(final_sector))
+
+    # sort independently is possible as both follw the same time line
+    borders = np.sort(np.array(borders))
+    sector_numbers = np.sort(np.array(sector_numbers))
 
     if len(borders) == 0:
 
@@ -263,7 +267,7 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
         return 1  # will allow np.split to make 1 array, i.e. no splitting
 
     if return_numbers:
-        return borders, np.array(sector_numbers)
+        return borders, sector_numbers
     return borders
 
 
