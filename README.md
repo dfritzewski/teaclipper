@@ -12,18 +12,18 @@ In addition, to the unified I/O to these packages, tea clipper offers two GUIs f
 
 Workflow
 ------------
-To search for period-spacing patterns with TESS, we need stars with many observed sectors. Ideal stars are located in the TESS continuous viewing zones. We choose TIC ## form [Garcia et al (2022)](https://ui.adsabs.harvard.edu/abs/2022A%26A...662A..82G/abstract).
+To search for period-spacing patterns with TESS, we need stars with many observed sectors. Ideal stars are located in the TESS continuous viewing zones. We choose TIC 374944608 form [Garcia et al (2022)](https://ui.adsabs.harvard.edu/abs/2022A%26A...662A..82G/abstract). Note that due to the amount of observed data, downloading and reducing the entire light curve may take some time and is quite resource intensive. Another star with a shorter period spacing pattern but also fewer observed Sectors is be the Pleiad TIC 67828699 (Fritzewski et al., submitted). Here, we restrict our analysis to a single star but `TICs` can be a list of all the stars you want to exermine.
 
 1. Download the TESS data and create light curve
 
 ```
 from teaclipper import TUcluster
-TICs = [##]
+TICs = [374944608]
 TUcluster.run_tu(TICs)
 ```
 
 
-Now there should be a folder called `TU` in your current directory. It contains the light curve and other intermediate products. For a full documentation of `tessutils` capabilities please consult its [github page](https://github.com/IvS-Asteroseismology/tessutils).
+Now there should be a folder called `TU` in your current directory. It contains the light curve and other intermediate products. `TUcluster` exposes many `tessutils` keyword arguments to the user. For a full documentation of these `tessutils` capabilities please consult its [github page](https://github.com/IvS-Asteroseismology/tessutils). 
 
 2. To inspect the light curve beyond the diagnosis plot produced by `tessutils` (which you should consult to check for example the contamination), we can use the light curve GUI:
 
@@ -32,8 +32,10 @@ from teaclipper import LCcheckGUI
 LCcheckGUI.launch_lc_review_gui(TICs, version='TU')
 ```
 
-A tk python window should appear. At the top, it shows all the light curves per Sector. Scroll down to see all light curves. The tool bar at the top allows the user to interact with the light curve plots
+A tk python window, as shown below, should appear. At the top, it shows all the light curves per Sector. Scroll down to see all light curves. The tool bar at the top allows the user to interact with the light curve plots
 In the bottom part, the periodogram is shown both in frequency and period space, to facilitate the asteroseismic analysis. Similarly to the light curves the tool bar at the bottom allows for interaction with these plots.
+
+![Light curve Inspection tool](res/LCinspection.png)
 
 3. Even after the detrending with the principal component analysis in `tessutils`, some trends persist that we can remove with polynomial detrending. 
 
@@ -56,8 +58,7 @@ from teaclipper import prewhitenSTS
 prewhitenSTS.prewhiten_all(TICs, red_name=red_name)
 ```
 
-
-This runs `starshadow` and creates all relevant files in the folder `STS`.
+This runs `starshadow` and creates all relevant files in the folder `STS`. Note that depending on the number of data points this step might take a while. 
 
 6. Finally, we can extract the gravity mode period spacing pattern and analyse it with `AMiGO`.
 
@@ -66,7 +67,13 @@ from teaclipper import findPatterns
 findPatterns.analyse_all(TICs, red_name=red_name)
 ``` 
 
-A different GUI should appear. The main plot shows the periodogram including the pre-whitened frequencies. By clicking on them they can be selected. Once more than one frequency is selected the bottom left plot shows the period spacing pattern. Right click allows to add gaps in the pattern. After selecting the detected pattern, the `AMiGO` parameters in the text box can be adjusted. By clicking "Run AMiGO" the fitting routine is initiated. Once a good fit is achieved (or not), the pass (fail) button at the top allow to go the next star in `TICs`.
+Now an interactive `matplotlib` window appears that allows you to explore and fit the period spacing pattern.
+
+![Interactive AMiGO fitting](res/interactAMiGO_init.png)
+
+The main plot shows the periodogram including the pre-whitened frequencies. By clicking on them they can be selected. Once more than one frequency is selected the bottom left plot shows the period spacing pattern. Right click allows to add gaps in the pattern. After selecting the detected pattern, the `AMiGO` parameters in the text box can be adjusted. By clicking "Run AMiGO" the fitting routine is initiated. Once a good fit is achieved (or not), the pass (fail) button at the top allow to go the next star in `TICs`. For the initial parameters it is recommended to scan a wider range with a coarse resolution first. Once a solution is found, you can adjust the parameters to bracket the observed values and increase the resolution to achieve the possible fit.
+
+![Interactive AMiGO fitting](res/interactAMiGO_final.png)
 
 This workflow is also outlined in `example.py`.
 
@@ -74,3 +81,5 @@ Installation instructions
 ------------------------------
 
 Tea clipper needs a running installation of `tessutils`, `starshadow`, and `AMiGO`, in addition it required `tk`. The `requirements.txt` includes all packages required to run tea clipper and `tessutils`, `starshadow`, and `AMiGO`. For problems with installing any of the other IvS packages please consult their respective github pages.
+
+Be aware that installing *all* packages from the `conda-forge` channel might lead to problems with `tk`. Hence, it is recommended to have `default` as your higher priority channel to install all packages available on `default` installed through this channel. In particular, use `default` for `python`, `matplotlib`, and `tk`.
