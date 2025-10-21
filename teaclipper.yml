@@ -1,14 +1,12 @@
-name: teclipper
+name: teaclipper
 channels:
-  - conda-forge
   - defaults
-dependencies:
-  - python=3.11    # Specify the Python version you want
+  - conda-forge
+  dependencies:
+  - python
   - numpy
   - pandas
   - matplotlib
-  - cxx-compiler   # Explicitly request the C++ compiler (for Clang on macOS)
-  - c-compiler     # Explicitly request the C compiler
   - astropy
   - astroquery
   - joblib
@@ -24,4 +22,3 @@ dependencies:
   - corner
   - lmfit
   - tk
-  - spyder-kernels=3.0
