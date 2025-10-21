@@ -1,7 +1,8 @@
 Tea clipper: TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings
 ================================================================
-
-<img src="res/teaclipper_logo.png" width="48">
+<p align="center">
+<img src="res/teaclipper_logo.png" width="250" alt="Tea Clipper logo">
+</p>
 
 Author: Dario Fritzewski (dario.fritzewski@kuleuven.be)
 
