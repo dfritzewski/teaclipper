@@ -1,6 +1,8 @@
 Tea clipper: TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings
 ================================================================
 
+![Tea Clipper logo](res/teaclipper_logo.png)
+
 Author: Dario Fritzewski (dario.fritzewski@kuleuven.be)
 
 Tea clipper is a Python package combining various Python packages developed at the asteroseismology group at the Institute of Astronomy (IvS) at KU Leuven to enable a smooth workflow for gravity mode asteroseismology. The aim of tea clipper is to provide a unified interface to the main three packages:
