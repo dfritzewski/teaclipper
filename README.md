@@ -69,11 +69,11 @@ findPatterns.analyse_all(TICs, red_name=red_name)
 
 Now an interactive `matplotlib` window appears that allows you to explore and fit the period spacing pattern.
 
-![Interactive AMiGO fitting](res/interactAMiGO_init.png)
+![Interactive AMiGO fitting](res/interactiveAMiGO_init.png)
 
 The main plot shows the periodogram including the pre-whitened frequencies. By clicking on them they can be selected. Once more than one frequency is selected the bottom left plot shows the period spacing pattern. Right click allows to add gaps in the pattern. After selecting the detected pattern, the `AMiGO` parameters in the text box can be adjusted. By clicking "Run AMiGO" the fitting routine is initiated. Once a good fit is achieved (or not), the pass (fail) button at the top allow to go the next star in `TICs`. For the initial parameters it is recommended to scan a wider range with a coarse resolution first. Once a solution is found, you can adjust the parameters to bracket the observed values and increase the resolution to achieve the possible fit.
 
-![Interactive AMiGO fitting](res/interactAMiGO_final.png)
+![Interactive AMiGO fitting](res/interactiveAMiGO_final.png)
 
 This workflow is also outlined in `example.py`.
 
