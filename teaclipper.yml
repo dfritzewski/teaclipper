@@ -2,23 +2,24 @@ name: teaclipper
 channels:
   - defaults
   - conda-forge
-  dependencies:
-  - python
-  - numpy
-  - pandas
-  - matplotlib
+dependencies:
+  - defaults::python
+  - defaults::numpy
+  - defaults::pandas
+  - defaults::matplotlib
   - astropy
-  - astroquery
-  - joblib
-  - lightkurve
-  - peakutils
-  - scipy
-  - tqdm
-  - IPython
-  - ipympl
-  - numba
-  - h5py
-  - arviz
-  - corner
-  - lmfit
-  - tk
+  - conda-forge::astroquery
+  - defaults::joblib
+  - conda-forge::lightkurve
+  - conda-forge::peakutils
+  - defaults::scipy
+  - defaults::tqdm
+  - defaults::IPython
+  - defaults::ipympl
+  - defaults::numba
+  - defaults::h5py
+  - defaults::arviz
+  - conda-forge::corner
+  - conda-forge::lmfit
+  - defaults::tk
+  

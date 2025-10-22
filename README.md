@@ -79,6 +79,6 @@ This workflow is also outlined in `example.py`.
 Installation instructions
 ------------------------------
 
-Tea clipper needs a running installation of `tessutils`, `starshadow`, and `AMiGO`, in addition it requires `tk`. The `requirements.txt` includes all packages required to run tea clipper and `tessutils`, `starshadow`, and `AMiGO`. Alternatively, `teaclipper.yml` can be used to setup a conda environment. For problems with installing any of the other IvS packages please consult their respective github pages.
+Tea clipper needs a running installation of `tessutils`, `starshadow`, and `AMiGO`, in addition it requires `tk`. The `requirements.txt` includes all packages required to run tea clipper and `tessutils`, `starshadow`, and `AMiGO`. Alternatively, `teaclipper.yml` can be used to setup a conda environment, however, it might be slow. For problems with installing any of the other IvS packages please consult their respective github pages.
 
 Be aware that installing *all* packages from the `conda-forge` channel might lead to problems with `tk`. Hence, it is recommended to have `default` as your higher priority channel to install all packages available on `default` installed through this channel. In particular, use `default` for `python`, `matplotlib`, and `tk`.
