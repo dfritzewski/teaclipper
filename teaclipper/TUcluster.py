@@ -73,7 +73,7 @@ def run_tu(TIC, LCdir='./TU/', red_name="", ncores=8, download=True,
 
         The default is 'auto'.
     extract : bool, optional
-        Do the extraction or not. Use full if you only want to download the FFI cutouts.
+        Do the extraction or not. Use False if you only want to download the FFI cutouts.
         The default is True.
     aperture_mask_max_elongation : int, optional
         Triggers when a 2D aperture mask has 4 or less columns (rows) and at
