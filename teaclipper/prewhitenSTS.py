@@ -42,12 +42,12 @@ def prepare_LCs(TICs, LCdir='./TU/', red_name='', version='detrended'):
     Path(outbase).mkdir(parents=True, exist_ok=True)
 
     for TIC in TICs:
-        LCdir += f'stitched{red_name}'
+        LCdir_l = LCdir + f'stitched{red_name}'
         if version == 'detrended':
             lcname = 'corrected_stitched_detrended'
         else:
             lcname = 'corrected_stitched'
-        inputpath = f'{LCdir}/lc_tic{TIC}_{lcname}.csv'
+        inputpath = f'{LCdir_l}/lc_tic{TIC}_{lcname}.csv'
         Path(f'{outbase}{red_name}').mkdir(parents=True, exist_ok=True)
         outputpath = f'{outbase}{red_name}/lc_tic{TIC}_corrected_stitched.dat'
         try:
