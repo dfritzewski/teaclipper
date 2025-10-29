@@ -10,7 +10,7 @@ from . import interactiveAmigo
 
 
 def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='./STS/',
-                analysis_file=2, pattern_path='amigo_good'):
+                analysis_file=2, pattern_path='./AMiGO_patterns/'):
     '''
     Loop through all stars given in the TICs list to find and fit period spacing patterns
     with AMiGO.
@@ -43,10 +43,30 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
 
     '''
     # load the GUI
-    amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path='amigo_good')
+    amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)
+
+    # read existing pass/fail lists
+    if pattern_path[-1] != '/':
+        pattern_path += '/'
+    try:
+        with open(pattern_path + 'fail_list.txt', 'r', encoding='utf-8') as flist:
+            failed_TICs = [int(line.rstrip()) for line in flist]
+    except FileNotFoundError:
+        failed_TICs = []
+
+    try:
+        with open(pattern_path + 'pass_list.txt', 'r', encoding='utf-8') as plist:
+            passed_TICs = [int(line.rstrip()) for line in plist]
+    except FileNotFoundError:
+        passed_TICs = []
 
     # loop through all TICs
     for TIC in TICs:
+
+        if (TIC in passed_TICs) or (TIC in failed_TICs):
+            print(f'Skipping {TIC} as it has been analysed before.')
+            continue
+
         try:
             star = interactiveAmigo.StarData(TIC, LCdir=LCdir, red_name=red_name, STSdir=STSdir,
                                              version=version, analysis_file=analysis_file)
@@ -54,4 +74,5 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
             print(f'TIC {TIC} could not be found. Skipping.')
             continue
         # call the analysis
+        amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)
         amigo_gui.make_analysis(star)

@@ -239,13 +239,13 @@ class InteractivePatternPlotter:
     '''
     Main class that enables the interactive AMiGO period-spacing patterns.
     stardata = StarData(TIC)
-    Usage InteractivePatternPlotter(pattern_path='amigo_good').make_analysis(stardata)
+    Usage InteractivePatternPlotter(pattern_path='./AMiGO_patterns/').make_analysis(stardata)
     '''
 
     def __init__(self,
                  pattern_path='./AMiGO_patterns/',
                  fail_list_name='fail_list.txt',
-                 softfail_list_name='.softfail_list.txt',
+                 softfail_list_name='softfail_list.txt',
                  pass_list_name='pass_list.txt'
                  ):
         '''
@@ -262,7 +262,7 @@ class InteractivePatternPlotter:
             search. The default is 'fail_list.txt'.
         softfail_list_name : str, optional
             Full path to a file that holds the TIC IDs of all stars that you might want to
-            reconsider later. The default is '.softfail_list.txt'.
+            reconsider later. The default is 'softfail_list.txt'.
         pass_list_name : str, optional
             Full path to a file that holds the TIC IDs of all stars with successful AMiGO fits.
             The default is 'pass_list.txt'.
@@ -276,6 +276,9 @@ class InteractivePatternPlotter:
         if pattern_path[-1] != '/':
             pattern_path += '/'
         self.pattern_path = pattern_path
+
+        Path(self.pattern_path).mkdir(parents=True, exist_ok=True)
+
         self.fail_list_name = fail_list_name
         self.softfail_list_name = softfail_list_name
         self.pass_list_name = pass_list_name
@@ -875,7 +878,7 @@ class InteractivePatternPlotter:
         Path(self.amigo_res.res_path).mkdir(parents=True, exist_ok=True)
 
         # write to file
-        with open(self.amigo_res.pattern_path, 'w', encoding="utf-8") as f:
+        with open(self.amigo_res.pattern_path, 'w+', encoding="utf-8") as f:
             f.write('# ' + "           ".join(header_cols) + '\n')  # write AMiGO header
 
             # write data
@@ -1045,7 +1048,7 @@ class InteractivePatternPlotter:
         self._flash_button(self.button_pass)
 
         # write to pass list and close
-        with open(self.pattern_path + self.pass_list_name, 'a', encoding="utf-8") as f:
+        with open(self.pattern_path + self.pass_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
         plt.close()
 
@@ -1084,7 +1087,7 @@ class InteractivePatternPlotter:
         self._flash_button(self.button_softfail)
 
         # write to softfail list and close
-        with open(self.pattern_path + self.softfail_list_name, 'a', encoding="utf-8") as f:
+        with open(self.pattern_path + self.softfail_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
         plt.close()
 
@@ -1101,7 +1104,7 @@ class InteractivePatternPlotter:
         self._flash_button(self.button_fail)
 
         # write to fail list and close
-        with open(self.pattern_path + self.fail_list_name, 'a', encoding="utf-8") as f:
+        with open(self.pattern_path + self.fail_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
         plt.close()
 
@@ -1223,7 +1226,7 @@ class InteractivePatternPlotter:
                                                     'mediumseagreen',
                                                     'lightgreen', self._submit)
 
-        plt.show()
+        plt.show(block=True)
 
     def predict_pattern(self, frot_bnd=[0, 2.5, 0.005], Pi0_bnd=[2300, 5600, 100],
                         kval=0, mval=1, nthreads=1,
@@ -1370,7 +1373,7 @@ class InteractivePatternPlotter:
         if output_log:
             logpath = (f'{self.pattern_path}/{self.star_data.name}/' +
                        f'{self.star_data.name}_modelling.log')
-            with open(logpath, 'w', encoding="utf-8") as logfile:
+            with open(logpath, 'w+', encoding="utf-8") as logfile:
                 logfile.write(f"\n{log_str}\n")
                 logfile.write(f"chi2_red = {min_chi2red}\n")
                 logfile.write(f"f_rot: {fin_frot.value} +/- {fin_e_frot.value} c/d\n")
