@@ -231,7 +231,7 @@ class StarData:
 
         '''
         print(f'reading STS results from: {self.pwpath}')
-        sts_dict = sts.ut.read_parameters_hdf5(self.pwpath, locking=False)
+        sts_dict = sts.ut.read_parameters_hdf5(self.pwpath, h5py_file_kwargs={'locking': False})
         self.sts_res = sts_dict
 
 
