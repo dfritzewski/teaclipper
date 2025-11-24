@@ -464,7 +464,7 @@ class InteractivePatternPlotter:
         None.
 
         '''
-        self.ax_chi.plot('time', 'flux', data=self.star_data.lc, c='k')
+        self.ax_chi.plot(self.star_data.lc.time.values, self.star_data.lc.flux.values, c='k')
         # somehow in the example data this is offset by one of you notice
         # such an offset remove the +1 below.
         self.ax_chi.plot(self.star_data.lc.time.values, self.flux_harm_resid_lin + 1, c='r')
