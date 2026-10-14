@@ -48,7 +48,7 @@ detrendLCs.all_poly_detrend(TICs)
 4. After detrending the light curves can be inspected again. In case of multiple stars, it would now be time to sort the light curves according to their asteroseismic potential. At the very bottom a drop down menu allows to select a category (or add a custom one) and add a comment for each TIC. The results are saved to a csv file for easy filtering. 
 
 ```
-launch_lc_review_gui(TICs, red_name=red_name, reviewfile='review_results_detrended.csv')
+LCcheckGUI.launch_lc_review_gui(TICs, red_name=red_name, reviewfile='review_results_detrended.csv')
 ```
 
 5. Now its time to extract all asteroseismicly relevant frequencies by pre-whitening with `starshadow`:
