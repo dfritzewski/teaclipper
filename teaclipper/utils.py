@@ -94,7 +94,7 @@ def save_lc(lc, TIC, LCdir='./TU/', red_name=''):
     lcname = '_corrected_stitched_detrended'
     lcpath = f'{LC_dir}lc_tic{TIC}{lcname}.csv'
 
-    lc.to_csv(lcpath)
+    lc.to_csv(lcpath, index=False)
 
 
 def get_sectors(lc, limit=0.5):

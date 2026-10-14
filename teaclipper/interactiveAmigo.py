@@ -130,7 +130,7 @@ class AMiGO_data:
         self.frot_e = self.amigo_res_df.frot_e.values[0]
         self.alpha = self.amigo_res_df.alpha.values[0]
         self.chi_sq = self.amigo_res_df.chi2_min.values[0]
-        self.gyre_dir = self.amigo_res_df.chi2_min.values[0]
+        self.gyre_dir = self.amigo_res_df.gyre_dir.values[0]
         self.amigo_kwarg = self.amigo_res_df.amigo_command.values[0]
 
         try:
@@ -218,7 +218,7 @@ class StarData:
         None.
 
         '''
-        lcdf = pd.read_csv(self.lcpath)
+        lcdf = utils.load_lc(self.TIC)
         self.lc = lcdf
 
     def load_pw(self):
@@ -545,10 +545,10 @@ class InteractivePatternPlotter:
         self.snr = self.amp / noise
         self.snr_thresh = sts.ut.signal_to_noise_threshold(len(self.star_data.lc.time))
 
-        sin_select = self.star_data.sts_res['sin_select']
-        self.b_bool = sin_select[2]                      # passed both sigma and S/N
+        # sin_select = self.star_data.sts_res['sin_select']
+        # self.b_bool = sin_select[2]                      # passed both sigma and S/N
 
-        self.h_bool = np.zeros(len(self.freq), dtype=bool)
+        # self.h_bool = np.zeros(len(self.freq), dtype=bool)
         # additional data for eclipsing binaries
         if self.star_data.analysis_file > 3:
             p_orb = self.star_data.sts_res['ephem'][0]
