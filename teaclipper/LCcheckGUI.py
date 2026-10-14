@@ -155,6 +155,7 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
             self.controls_frame.grid(row=3, column=0, sticky="ew")
 
             self._setup_controls()
+            self.load_data()
 
         def _on_canvas_resize(self, event):
             """

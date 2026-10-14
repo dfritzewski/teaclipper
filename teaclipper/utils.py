@@ -250,10 +250,17 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
             return no_border, nums
         return no_border
 
-    # add the final sector number
-    final_sector = timedf[(timedf.startJD < time[borders[-1] + 1]) &
-                          (timedf.endJD >= time[-1])].Sector.iloc[0]
-    sector_numbers.append(int(final_sector))
+    # add the final sector number safely
+    idx_check = min(borders[-1] + 1, len(time) - 1)
+    final_rows = timedf[(timedf.startJD < time[idx_check]) & (timedf.endJD >= tmax)]
+
+    if not final_rows.empty:
+        final_sector = int(final_rows['Sector'].iloc[0])
+        sector_numbers.append(final_sector)
+    elif len(sector_numbers) > 0:
+        sector_numbers.append(sector_numbers[-1])
+    else:
+        sector_numbers.append(1)  # Fallback sector number if nothing matches
 
     # sort independently is possible as both follw the same time line
     borders = np.sort(np.array(borders))
