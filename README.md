@@ -15,7 +15,7 @@ In addition, to the unifying the I/O processes of these packages, Tea Clipper of
 
 Workflow
 ------------
-To search for period-spacing patterns with TESS, we need stars with many observed TESS sectors. Ideal stars are located in the TESS continuous viewing zones. For this example, we choose TIC 374944608 from [Garcia et al (2022)](https://ui.adsabs.harvard.edu/abs/2022A%26A...662A..82G/abstract). Note that due to the amount of observed data, downloading and reducing the entire light curve may take some time and is quite resource intensive. Another star with a shorter period spacing pattern but also fewer observed Sectors is the Pleiad TIC 67828699 (Fritzewski et al., submitted).
+To search for period-spacing patterns with TESS, we need stars with many observed TESS sectors. Ideal stars are located in the TESS continuous viewing zones. For this example, we choose TIC 374944608 from [Garcia et al (2022)](https://ui.adsabs.harvard.edu/abs/2022A%26A...662A..82G/abstract). Note that due to the amount of observed data, downloading and reducing the entire light curve may take some time and is quite resource intensive. Another star with a shorter period spacing pattern but also fewer observed Sectors is the Pleiad TIC 67828699 [(Fritzewski et al., 2026)](https://ui.adsabs.harvard.edu/abs/2026A%26A...706A.131F/abstract).
 
 1. Download the TESS data and create light curve
 
