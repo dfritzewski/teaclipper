@@ -27,6 +27,7 @@ from tkinter import ttk, messagebox
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from . import utils
@@ -63,6 +64,9 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
         reviewed_tics = set(pd.read_csv(reviewfile)['TIC'])
 
     TICs = [TIC for TIC in TICs if TIC not in reviewed_tics]
+    if not TICs:
+        print(f'All TICs are already in {reviewfile}. Use another reviewfile to reclassify.')
+        return
 
     class ReviewApp:
         """
@@ -151,7 +155,6 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
             self.controls_frame.grid(row=3, column=0, sticky="ew")
 
             self._setup_controls()
-            data = self.load_data()
 
         def _on_canvas_resize(self, event):
             """
@@ -257,11 +260,12 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
             s_time = np.split(lc.time, sector_borders)
             s_flux = np.split(lc.flux, sector_borders)
 
-            nSec = len(sectors)
+            nSec = len(s_time)
 
             # Light Curve Plots
             rows = (nSec + 1) // 2
-            fig_lc, axs = plt.subplots(rows, 2, figsize=(10, 2.5 * rows))
+            fig_lc = Figure(figsize=(10, 2.5 * rows))
+            axs = np.atleast_1d(fig_lc.subplots(rows, 2)).flatten()
             axs = axs.flatten()
 
             for i in range(nSec):
@@ -286,10 +290,11 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
             # Use pack to place the toolbar within the toolbar frame
             toolbar_lc.pack(side=tk.TOP, fill=tk.X)
 
-            plt.close(fig_lc)  # Close the matplotlib figure to free memory
+            # plt.close(fig_lc)  # Close the matplotlib figure to free memory
 
             # --- Periodogram Plots (Non-Scrollable Area) ---
-            fig_pg, ax_pg = plt.subplots(2, 1, figsize=(10, 4))
+            fig_pg = Figure(figsize=(10, 4))
+            ax_pg = fig_pg.subplots(2, 1)
             ax_pg[0].plot(pg.frequency.value, pg.power.value * 1000, color='k', lw=0.1)
             ax_pg[0].set_title(f'TIC {TIC} ({current_number}/{len(self.TICs)})')
             ax_pg[0].set_xlabel('Frequency [d$^{-1}$]')
@@ -316,7 +321,7 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
 
             # Use fill=tk.X for horizontal expansion
             canvas_pg.get_tk_widget().pack(fill=tk.X, expand=True)
-            plt.close(fig_pg)  # Close the matplotlib figure
+            # plt.close(fig_pg)  # Close the matplotlib figure
 
             # Update the scroll region
             self.scrollable_frame.update_idletasks()
@@ -359,6 +364,12 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
                 self.load_data()
 
     root = tk.Tk()
-    _ = ReviewApp(root, TICs, reviewfile=reviewfile, LCdir=LCdir,
-                  version=version, red_name=red_name)
-    root.mainloop()
+    try:
+        _ = ReviewApp(root, TICs, reviewfile=reviewfile, LCdir=LCdir,
+                      version=version, red_name=red_name)
+        root.mainloop()
+    finally:
+        try:
+            root.destroy()
+        except tk.TclError:      # already destroyed, e.g. window closed with the X
+            pass

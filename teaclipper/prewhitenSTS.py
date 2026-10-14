@@ -121,25 +121,8 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False, EB=False):
 
     # split time into individually handled parts
     border = utils.get_sectors_dates(times, split='Contact')
-
-    i_sectors = []
-
-    # make vector for STS
-    for i, t in enumerate(border):
-        if i == 0:
-            i_sectors.append([0, t])
-
-        if i == len(border) - 1:
-            p_i = [t, len(times)]
-        else:
-            p_i = [t, border[i + 1]]
-
-        i_sectors.append(p_i)
-
-    i_sectors = np.array(i_sectors)
-
-    if len(i_sectors) == 0:
-        i_sectors = np.array([[0, len(times)]])
+    i_sectors = np.column_stack([np.r_[0, border],
+                                 np.r_[border, len(times)]]).astype(int)
 
     # Do the pre-whitening
     if EB:
@@ -251,6 +234,10 @@ def make_FLOSSY_input(TIC, times, signal,  indir='./STS/', EB=False):
                    'tic': np.ones(len_freq) * TIC,
                    'stopcrit': np.ones(len_freq) * 10}
     df = pd.DataFrame(flossy_dict)
+    if EB:
+        harm_idx, _ = sts.af.find_harmonics_from_pattern(res['sin_mean'][2],
+                                                         res['ephem'][0], f_tol=1e-9)
+        df = df.drop(index=harm_idx)
 
     flossy_name = indir + lcname + '_analysis' + f'/pw_tic{TIC}.csv'
 

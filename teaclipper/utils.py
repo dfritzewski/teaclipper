@@ -243,18 +243,12 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
         sector_numbers.append(int(row['Sector']))
 
     if len(borders) == 0:
-        # Find the Sector that covers the entire light curve
-        covering_segment = timedf[(timedf.startJD <= tmin) & (timedf.endJD >= tmax)]
-
+        no_border = np.array([], dtype=int)
         if return_numbers:
-            if not covering_segment.empty:
-                sector_number = covering_segment['Sector'].iloc[0]
-
-                return 1, [int(sector_number)]
-
-            return np.array([1]), None
-
-        return 1  # will allow np.split to make 1 array, i.e. no splitting
+            covering = timedf[(timedf.startJD <= tmin) & (timedf.endJD >= tmax)]
+            nums = [int(covering['Sector'].iloc[0])] if not covering.empty else []
+            return no_border, nums
+        return no_border
 
     # add the final sector number
     final_sector = timedf[(timedf.startJD < time[borders[-1] + 1]) &

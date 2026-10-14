@@ -7,6 +7,7 @@ Created on Fri Oct 17 13:47:25 2025
 """
 
 from . import interactiveAmigo
+import traceback
 from matplotlib import pyplot as plt
 
 
@@ -90,8 +91,11 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
             print(f"Error processing TIC {TIC}: {e}")
             continue
         # call the analysis
-        amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)
+        gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)
         try:
-            amigo_gui.make_analysis(star)
+            gui.make_analysis(star)
+        except Exception:
+            print(f'TIC {TIC}: analysis failed, skipping.')
+            traceback.print_exc()
         finally:
-            plt.close(amigo_gui.fig)
+            plt.close(gui.fig)

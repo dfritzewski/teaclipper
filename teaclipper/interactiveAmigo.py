@@ -439,7 +439,7 @@ class InteractivePatternPlotter:
                           self.amp[self.fail_bool], colors='b', label="fail_snr_sigma", zorder=1)
 
         # add orbital harmonics of eclipsing binary
-        if self.star_data.analysis_file > 3:
+        if self.star_data.analysis_file > 3 and self.h_bool.any():
             self.ax_pg.vlines(self.harm_pred_P, 0, max(self.amp[self.h_bool]), colors='wheat',
                               linestyles=':', label='Orbital harmonics')
             self.ax_pg.vlines(1 / self.freq[self.h_bool], np.zeros_like(self.freq[self.h_bool]),
@@ -545,10 +545,14 @@ class InteractivePatternPlotter:
         self.snr = self.amp / noise
         self.snr_thresh = sts.ut.signal_to_noise_threshold(len(self.star_data.lc.time))
 
+        sin_select = self.star_data.sts_res['sin_select']
+        self.b_bool = sin_select[2]                      # passed both sigma and S/N
+
+        self.h_bool = np.zeros(len(self.freq), dtype=bool)
         # additional data for eclipsing binaries
         if self.star_data.analysis_file > 3:
             p_orb = self.star_data.sts_res['ephem'][0]
-            harm_pred = 1 / p_orb * np.arange(max(self.pg_full[0]) / (1 / p_orb))
+            harm_pred = np.arange(1, int(self.pg_full[0].max() * p_orb) + 1) / p_orb
             self.harm_pred_P = 1 / harm_pred
         else:
             self.harm_pred_P = None
@@ -1190,6 +1194,12 @@ class InteractivePatternPlotter:
 
         # read all the available data and prepare the periodograms
         self._prepare_data()
+
+        # exit if EB analysis return no non-harmonics
+        if len(self.good_freq) == 0:
+            print(f'TIC {self.star_data.TIC}: no non-harmonic frequencies. Skipping.')
+            plt.close(self.fig)
+            return
 
         # plot the periodogram and picked periods
         if self.amigo_res.obsstar is not None:
