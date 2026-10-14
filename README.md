@@ -22,16 +22,17 @@ To search for period-spacing patterns with TESS, we need stars with many observe
 ```
 from teaclipper import TUcluster
 TICs = [374944608]
-TUcluster.run_tu(TICs)
+red_name = 'test'
+TUcluster.run_tu(TICs, red_name=red_name)
 ```
 
-After completion a new folder called `TU` can be found in the current directory. It contains the light curve and other intermediate products. `TUcluster` exposes many `tessutils` keyword arguments to the user. For a full documentation of these `tessutils` capabilities please consult its [github page](https://github.com/IvS-Asteroseismology/tessutils).
+After completion a new folder called `TU` can be found in the current directory. It contains the light curve and other intermediate products. `TUcluster` exposes many `tessutils` keyword arguments to the user. For a full documentation of these `tessutils` capabilities please consult its [github page](https://github.com/IvS-Asteroseismology/tessutils). Here, we give our reduction the name `red_name = test`. This parameter is optional but comes handy in case you want to test different parameters.
 
 2. To inspect the light curve beyond the diagnosis plot produced by `tessutils` (which should always be consult to check, for example, the contamination), we use the graphical user interface "Light Curve Inspection Tool":
 
 ```
 from teaclipper import LCcheckGUI
-LCcheckGUI.launch_lc_review_gui(TICs, version='TU')
+LCcheckGUI.launch_lc_review_gui(TICs, version='TU', red_name=red_name)
 ```
 
 A `tk` python window, as shown below, should appear. At the top, it shows all the light curves per Sector. Scroll down to see all light curves. The tool bar at the top allows the user to interact with the light curve plots. In the bottom part, the periodogram is shown both in frequency and period space, to facilitate the asteroseismic analysis. Similarly to the light curves the tool bar at the bottom allows for interaction with these plots.
@@ -42,7 +43,7 @@ A `tk` python window, as shown below, should appear. At the top, it shows all th
 
 ```
 from teaclipper import detrendLCs
-detrendLCs.all_poly_detrend(TICs)
+detrendLCs.all_poly_detrend(TICs, red_name=red_name)
 ```
 
 4. After detrending the light curves can be inspected again. In case of multiple stars, it would now be time to sort the light curves according to their asteroseismic potential. At the very bottom a drop down menu allows to select a category (or add a custom one) and add a comment for each TIC. The results are saved to a csv file for easy filtering. 
@@ -57,9 +58,9 @@ from teaclipper import prewhitenSTS
 prewhitenSTS.prewhiten_all(TICs, red_name=red_name)
 ```
 
-This runs `starshadow` and creates all relevant files in the folder `STS`. Note that depending on the number of data points this step might take a while.
+This runs `starshadow` and creates all relevant files in the folder `STS`. Note that depending on the number of data points this step might take a while. In case you are working with eclipsing binaries, you can add `EB = True` as an argument to also identify the orbital harmonics with `starshadow`. 
 
-6. Finally, we can extract the gravity mode period spacing pattern and analyse it with `AMiGO`.
+6. Finally, we can extract the gravity mode period spacing pattern and analyse it with `AMiGO`. If you used `EB = True` before, add `analysis_file=5` as an argument below.
 
 ```
 from teaclipper import findPatterns
