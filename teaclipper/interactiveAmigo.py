@@ -700,15 +700,15 @@ class InteractivePatternPlotter:
         '''
 
         if self.amigo_res.amigo_res_df is not None:
-            plt.suptitle(f"TIC {self.star_data.TIC}\n" +
-                         fr"$\Pi_0=$ {self.amigo_res.Pi0:.0f} $\pm$ {self.amigo_res.Pi0_e:.2f}, " +
-                         r"$f_{\rm rot}=$" +
-                         fr"{self.amigo_res.frot:.3f} $\pm$ {self.amigo_res.frot_e:.3f}" +
-                         "\n" +
-                         fr"$\alpha=$ {self.amigo_res.alpha:.3f}, " +
-                         r"$\chi^2_{\rm min}=$" + f"{self.amigo_res.chi_sq:.0f}")
+            self.fig.suptitle(f"TIC {self.star_data.TIC}\n" +
+                              fr"$\Pi_0=$ {self.amigo_res.Pi0:.0f} $\pm$ {self.amigo_res.Pi0_e:.2f}, " +
+                              r"$f_{\rm rot}=$" +
+                              fr"{self.amigo_res.frot:.3f} $\pm$ {self.amigo_res.frot_e:.3f}" +
+                              "\n" +
+                              fr"$\alpha=$ {self.amigo_res.alpha:.3f}, " +
+                              r"$\chi^2_{\rm min}=$" + f"{self.amigo_res.chi_sq:.0f}")
         else:
-            plt.suptitle(f"TIC {self.star_data.TIC}\n")
+            self.fig.suptitle(f"TIC {self.star_data.TIC}\n")
 
     def _create_gap_list(self):
         '''
@@ -1033,7 +1033,7 @@ class InteractivePatternPlotter:
         self.fig.canvas.draw()
 
         # save current view for future reference
-        plt.savefig(f"{self.pattern_path}TIC{self.star_data.TIC}_spacing.png")
+        self.fig.savefig(f"{self.pattern_path}TIC{self.star_data.TIC}_spacing.png")
 
     def _button_click_pass(self, _):
         '''
@@ -1050,7 +1050,7 @@ class InteractivePatternPlotter:
         # write to pass list and close
         with open(self.pattern_path + self.pass_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
-        plt.close()
+        plt.close(self.fig)
 
     def _button_click_reset(self, _):
         '''
@@ -1089,7 +1089,7 @@ class InteractivePatternPlotter:
         # write to softfail list and close
         with open(self.pattern_path + self.softfail_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
-        plt.close()
+        plt.close(self.fig)
 
     def _button_click_fail(self, _):
         '''
@@ -1106,7 +1106,7 @@ class InteractivePatternPlotter:
         # write to fail list and close
         with open(self.pattern_path + self.fail_list_name, 'a+', encoding="utf-8") as f:
             f.write(f'{self.star_data.TIC} \n')
-        plt.close()
+        plt.close(self.fig)
 
     def _flash_button(self, button):
         '''

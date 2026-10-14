@@ -150,12 +150,12 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False, EB=False):
                              verbose=False, overwrite=True)
 
     # plotting
-    sts.ut.sequential_plotting(times, signal, signal_err, i_sectors,
-                               str(Path(lcpath).with_suffix('')),
-                               indir, save_dir=indir)
+    plot_dir = f'{indir}{red_name}/'
+    sts.ut.sequential_plotting(times, signal, signal_err, i_sectors, Path(lcpath).stem,
+                               plot_dir, save_dir=plot_dir, show=False)
 
     if FLOSSY:
-        make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/')
+        make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/', EB=EB)
 
 
 def prewhiten_all(TICs, LCdir='./TU/', red_name='', prepare=True, version='detrended',
@@ -271,7 +271,7 @@ def make_FLOSSY_input(TIC, times, signal,  indir='./STS/', EB=False):
                header='freq,amp', comments='')
 
 
-def make_FLOSSY_input_retroactive(TICs, red_name='', LCdir='./TU/'):
+def make_FLOSSY_input_retroactive(TICs, red_name='', LCdir='./TU/', EB=False):
     '''
     Use ths function to make FLOSSY input if you have already pre-whitened the data.
 
@@ -284,6 +284,9 @@ def make_FLOSSY_input_retroactive(TICs, red_name='', LCdir='./TU/'):
     red_name : str, optional
         Additional string attached to the specific reduction of TU.
         The default is ''.
+    EB : bool, optional
+        Set to true if you want to analyse EBs with eclipses removed.
+        Default is False.
 
     Returns
     -------
@@ -295,4 +298,4 @@ def make_FLOSSY_input_retroactive(TICs, red_name='', LCdir='./TU/'):
         lcname = f'lc_tic{TIC}_corrected_stitched.dat'
         lcpath = indir + f'{red_name}/' + lcname
         times, signal, signal_err = np.loadtxt(lcpath, unpack=True)
-        make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/')
+        make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/', EB=EB)

@@ -7,6 +7,7 @@ Created on Fri Oct 17 13:47:25 2025
 """
 
 from . import interactiveAmigo
+from matplotlib import pyplot as plt
 
 
 def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='./STS/',
@@ -90,4 +91,7 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
             continue
         # call the analysis
         amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)
-        amigo_gui.make_analysis(star)
+        try:
+            amigo_gui.make_analysis(star)
+        finally:
+            plt.close(amigo_gui.fig)
