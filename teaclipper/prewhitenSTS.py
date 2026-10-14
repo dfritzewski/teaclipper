@@ -85,7 +85,7 @@ def TU2STS_single(inpath, outpath):
                                               index=False)
 
 
-def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False):
+def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False, EB=False):
     """
     Do the pre-whitening with STS and create FLOSSY compatible files.
 
@@ -99,6 +99,12 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False):
     red_name : str, optional
         Additional name to distinguish two TU reductions, see prepare_LCs.
         The default is ''.
+    FLOSSY : bool, optional
+        Whether to create FLOSSY output or not. The default is False
+    EB : bool, optional
+        If the analysed star is an eclipsing binary and you wish to
+        use the full sts tool chain set to True. The deault is False and
+        terminates after the frequency extraction step.
 
     Returns
     -------
@@ -111,7 +117,7 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False):
 
     lcname = f'lc_tic{TIC}_corrected_stitched.dat'
     lcpath = indir + f'{red_name}/' + lcname
-    times, signal, _ = np.loadtxt(lcpath, unpack=True)
+    times, signal, signal_err = np.loadtxt(lcpath, unpack=True)
 
     # split time into individually handled parts
     border = utils.get_sectors_dates(times, split='Contact')
@@ -132,15 +138,20 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False):
 
     i_sectors = np.array(i_sectors)
 
-    if len(i_sectors == 0):
+    if len(i_sectors) == 0:
         i_sectors = np.array([[0, len(times)]])
 
     # Do the pre-whitening
-    sts.analyse_lc_from_file(lcpath, i_sectors=i_sectors, stage='freq',
+    if EB:
+        stage = 'harm'
+    else:
+        stage = 'freq'
+    sts.analyse_lc_from_file(lcpath, i_sectors=i_sectors, stage=stage,
                              verbose=False, overwrite=True)
 
     # plotting
-    sts.ut.sequential_plotting(times, signal, i_sectors, lcpath.split('.')[0],
+    sts.ut.sequential_plotting(times, signal, signal_err, i_sectors,
+                               str(Path(lcpath).with_suffix('')),
                                indir, save_dir=indir)
 
     if FLOSSY:
@@ -148,7 +159,7 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False):
 
 
 def prewhiten_all(TICs, LCdir='./TU/', red_name='', prepare=True, version='detrended',
-                  FLOSSY=False):
+                  FLOSSY=False, EB=False):
     """
     Main function to pre-whiten all LC as retrieved from TU.
 
@@ -168,6 +179,10 @@ def prewhiten_all(TICs, LCdir='./TU/', red_name='', prepare=True, version='detre
         additional detrending. The default is 'detrended'.
     FLOSSY : bool
         Create input files for FLOSSY. The default is False.
+    EB : bool, optional
+        If the analysed star is an eclipsing binary and you wish to
+        use the full sts tool chain set to True. The deault is False and
+        terminates after the frequency extraction step.
 
     Returns
     -------
@@ -181,12 +196,12 @@ def prewhiten_all(TICs, LCdir='./TU/', red_name='', prepare=True, version='detre
 
     for TIC in TICs:
         try:
-            prewhitening(TIC, indir=indir, red_name=red_name, FLOSSY=FLOSSY)
+            prewhitening(TIC, indir=indir, red_name=red_name, FLOSSY=FLOSSY, EB=EB)
         except FileNotFoundError:
             continue
 
 
-def make_FLOSSY_input(TIC, times, signal,  indir='./STS/'):
+def make_FLOSSY_input(TIC, times, signal,  indir='./STS/', EB=False):
     """
     Reads STS output and creates FLOSSY csv files
 
@@ -200,6 +215,9 @@ def make_FLOSSY_input(TIC, times, signal,  indir='./STS/'):
         Flux array of LC.
     indir : TYPE, optional
         Path to the STS extracted signals. The default is './STS/'.
+    EB : bool, optional
+        Set to true if you want to analyse EBs with eclipses removed.
+        Default is False.
 
     Returns
     -------
@@ -211,7 +229,12 @@ def make_FLOSSY_input(TIC, times, signal,  indir='./STS/'):
 
     lcname = f'lc_tic{TIC}_corrected_stitched'
 
-    filepath = indir + f'{lcname}_analysis/{lcname}_analysis_2.hdf5'
+    if EB:
+        analysis_num = 5
+    else:
+        analysis_num = 2
+
+    filepath = indir + f'{lcname}_analysis/{lcname}_analysis_{analysis_num}.hdf5'
 
     res = sts.utility.read_parameters_hdf5(filepath)
     len_freq = len(res['sin_mean'][2])
@@ -246,3 +269,30 @@ def make_FLOSSY_input(TIC, times, signal,  indir='./STS/'):
     pg_name = indir + lcname + '_analysis' + f'/pg_tic{TIC}.csv'
     np.savetxt(pg_name, np.array([f[fsmall], a[fsmall]]).T, delimiter=',',
                header='freq,amp', comments='')
+
+
+def make_FLOSSY_input_retroactive(TICs, red_name='', LCdir='./TU/'):
+    '''
+    Use ths function to make FLOSSY input if you have already pre-whitened the data.
+
+    Parameters
+    ----------
+    TICs : list-like
+        Holds your TIC IDs.
+    LCdir : str, optional
+        Root of your Tessutils directory. The default is './TU/'.
+    red_name : str, optional
+        Additional string attached to the specific reduction of TU.
+        The default is ''.
+
+    Returns
+    -------
+    None.
+
+    '''
+    indir = '/'.join(LCdir.split('/')[:-2]) + '/STS/'
+    for TIC in TICs:
+        lcname = f'lc_tic{TIC}_corrected_stitched.dat'
+        lcpath = indir + f'{red_name}/' + lcname
+        times, signal, signal_err = np.loadtxt(lcpath, unpack=True)
+        make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/')

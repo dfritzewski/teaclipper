@@ -151,7 +151,7 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
             self.controls_frame.grid(row=3, column=0, sticky="ew")
 
             self._setup_controls()
-            self.load_data()
+            data = self.load_data()
 
         def _on_canvas_resize(self, event):
             """
@@ -233,9 +233,22 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
                 lc = utils.load_lc(TIC, LCdir=self.LCdir, version=self.version,
                                    red_name=self.red_name, return_lk=True)
             except FileNotFoundError:
-                print(f'TIC {TIC}: no lc found.')
+                print(f'TIC {TIC}: LC not found.')
+                missing_data = pd.DataFrame({'TIC': [TIC], 'Classification': ['no LC'],
+                                             'Comment': ['']})
+
+                missing_data.to_csv(self.outname, mode='a',
+                                    header=not os.path.exists(self.outname), index=False)
+
                 self.index += 1
-                return
+
+                # Check if there are more TICs to process
+                if self.index < len(self.TICs):
+                    return self.load_data()
+                else:
+                    messagebox.showinfo("Done", "All TICs reviewed. Data saved.")
+                    self.master.quit()
+                    return 0
 
             pg = lc.to_periodogram()
             sector_borders, sectors = utils.get_sectors_dates(lc.time.value, return_numbers=True,

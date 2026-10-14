@@ -32,7 +32,7 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
         lightcurves. The default is './STS/'.
     analysis_file : int, optional
         Highest executed step in the star shadow analysis. Set to 2 for only pre-whitening,
-        or to 5 for the full eclipsing binary chain. The default is 5.
+        or to 5 for the full eclipsing binary chain. The default is 2.
     pattern_path : str, optional
         Path to directory that (will) store the AMiGO results.
         The default is './AMiGO_patterns/'.
@@ -71,7 +71,22 @@ def analyse_all(TICs, LCdir='./TU/', red_name='', version='detrended', STSdir='.
             star = interactiveAmigo.StarData(TIC, LCdir=LCdir, red_name=red_name, STSdir=STSdir,
                                              version=version, analysis_file=analysis_file)
         except FileNotFoundError:
-            print(f'TIC {TIC} could not be found. Skipping.')
+            if analysis_file == 5:
+                try:
+                    star = interactiveAmigo.StarData(TIC, LCdir=LCdir, red_name=red_name,
+                                                     STSdir=STSdir, version=version,
+                                                     analysis_file=2)
+                except FileNotFoundError:
+                    print(f'TIC {TIC} could not be found. Skipping.')
+                    continue
+                except Exception as e:
+                    print(f"Error processing TIC {TIC}: {e}")
+                    continue
+            else:
+                print(f'TIC {TIC} could not be found. Skipping.')
+                continue
+        except Exception as e:
+            print(f"Error processing TIC {TIC}: {e}")
             continue
         # call the analysis
         amigo_gui = interactiveAmigo.InteractivePatternPlotter(pattern_path=pattern_path)

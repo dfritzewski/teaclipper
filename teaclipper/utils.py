@@ -242,6 +242,20 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
         borders.append(b)
         sector_numbers.append(int(row['Sector']))
 
+    if len(borders) == 0:
+        # Find the Sector that covers the entire light curve
+        covering_segment = timedf[(timedf.startJD <= tmin) & (timedf.endJD >= tmax)]
+
+        if return_numbers:
+            if not covering_segment.empty:
+                sector_number = covering_segment['Sector'].iloc[0]
+
+                return 1, [int(sector_number)]
+
+            return np.array([1]), None
+
+        return 1  # will allow np.split to make 1 array, i.e. no splitting
+
     # add the final sector number
     final_sector = timedf[(timedf.startJD < time[borders[-1] + 1]) &
                           (timedf.endJD >= time[-1])].Sector.iloc[0]
@@ -250,21 +264,6 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
     # sort independently is possible as both follw the same time line
     borders = np.sort(np.array(borders))
     sector_numbers = np.sort(np.array(sector_numbers))
-
-    if len(borders) == 0:
-
-        # Find the Sector that covers the entire light curve
-        covering_segment = timedf[(timedf.startJD <= tmin) & (timedf.endJD >= tmax)]
-
-        if return_numbers:
-            if not covering_segment.empty:
-                sector_number = covering_segment['Sector'].iloc[0]
-
-                return 1, sector_number
-
-            return np.array([1]), None
-
-        return 1  # will allow np.split to make 1 array, i.e. no splitting
 
     if return_numbers:
         return borders, sector_numbers
