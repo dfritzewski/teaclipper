@@ -1,7 +1,7 @@
 """TEACLIPPER
 
-Code written by: ...
-"""
+Code written by: ... 
+""" # update author
 
 from setuptools import setup
 
@@ -15,16 +15,17 @@ ACRONYM = ('TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings
 
 setup(name="teaclipper",
       version=f'{MAJOR}.{MINOR}.{ATTR}',
-      author='...',
-      url='https://github.com/freestket/teaclipper',
+      author='...', # update author
+      url='https://github.com/freestket/teaclipper', # update to correct link
       # license='GNU General Public License v3.0',
       description=ACRONYM,
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
       packages=['teaclipper'],
       package_dir={'teaclipper': 'teaclipper'},
-      python_requires='>=3.6,<3.13',
-      install_requires=[
+      package_data={'teaclipper': ['TESS_orbit_times.csv']}, # include the .csv file in the package install
+      python_requires='>=3.6,<3.13', # update python dependency
+      install_requires=[ # update or verify package dependencies / add versions
             'astropy',
             'astroquery',
             'joblib',
