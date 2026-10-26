@@ -161,13 +161,20 @@ def run_tu(TIC, LCdir='./TU/', red_name="", ncores=8, download=True,
 
     # group LCs
     red_dir = f"{LCdir}grouped{red_name}"
-    tu.reduction.group_lcs(lc_dir, outputdir=red_dir, TICs=TIC, sectors=sectors)
+    tu.reduction.group_lcs(lc_dir, 
+                           outputdir=red_dir, 
+                           TICs=TIC, 
+                           sectors=sectors,
+                           ncores=ncores)
 
     # stitch LCs
     sticht_dir = f"{LCdir}stitched{red_name}"
-    tu.reduction.stitch_group(red_dir, TICs=TIC, outputdir=sticht_dir,
-                              overwrite=overwrite, binlc=binlc,
-                              time_bin_size=time_bin_size)
+    tu.reduction.stitch_group(red_dir, TICs=TIC, 
+                              outputdir=sticht_dir,
+                              overwrite=overwrite, 
+                              binlc=binlc,
+                              time_bin_size=time_bin_size,
+                              ncores=ncores)
 
     # plot diagnosis
     pdfdir = f"{LCdir}diagnosis{red_name}"
