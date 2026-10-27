@@ -206,10 +206,10 @@ class StarData:
                        + '_analysis/' + f'{lc_name_sts}_analysis_{self.analysis_file}.hdf5')
 
         # load LC and STS results
-        self.load_lc()
+        self.load_lc(red_name=red_name)
         self.load_pw()
 
-    def load_lc(self):
+    def load_lc(self, red_name=''):
         '''
         Loading function for light curve.
 
@@ -218,7 +218,7 @@ class StarData:
         None.
 
         '''
-        lcdf = utils.load_lc(self.TIC)
+        lcdf = utils.load_lc(self.TIC, red_name=red_name)
         self.lc = lcdf
 
     def load_pw(self):
