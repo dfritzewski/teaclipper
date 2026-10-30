@@ -294,9 +294,18 @@ def check_sector_file(tmaxlc, tmaxTESS):
         p = Path(__file__).with_name('TESS_orbit_times.csv')
         fname = p.absolute()
 
-        with open(fname, 'wb') as out_file:
-            content = requests.get(url, stream=True, timeout=10).content
-            out_file.write(content)
+        try:
+            response = requests.get(url, stream=True, timeout=10)
+            response.raise_for_status()
+
+            with open(fname, 'wb') as out_file:
+                out_file.write(response.content)
+
+        except Exception as e:
+            print(f'Dowload of latest TESS sector list failed: {e}')
+            print('Try downloading it manually from https://tess.mit.edu/public/files/TESS_orbit_times.csv')
+            print('You might encounter errors futher down the line.')
+
         return True
 
     return False
