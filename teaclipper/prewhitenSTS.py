@@ -130,12 +130,12 @@ def prewhitening(TIC, indir='./STS/', red_name='', FLOSSY=False, EB=False):
     else:
         stage = 'freq'
     sts.analyse_lc_from_file(lcpath, i_sectors=i_sectors, stage=stage,
-                             verbose=False, overwrite=True)
+                             verbose=False, overwrite=True, sn_thr_punish_gap=True)
 
     # plotting
     plot_dir = f'{indir}{red_name}/'
     sts.ut.sequential_plotting(times, signal, signal_err, i_sectors, Path(lcpath).stem,
-                               plot_dir, save_dir=plot_dir, show=False)
+                               plot_dir, save_dir=plot_dir, show=False, sn_thr_punish_gap=True)
 
     if FLOSSY:
         make_FLOSSY_input(TIC, times, signal, indir=f'{indir}{red_name}/', EB=EB)
