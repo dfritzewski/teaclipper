@@ -215,44 +215,52 @@ def launch_lc_review_gui(TICs, reviewfile='review_results.csv', LCdir='./TU/',
 
         def load_data(self):
             """
-            Load data and create all the plots. Could be refactored but it works...
-
-            Returns
-            -------
-            None.
-
+            Load data and create all the plots, skipping missing/corrupt LCs iteratively.
             """
-            # Clear previous plots/widgets
-            for widget in self.scrollable_frame.winfo_children():
-                widget.destroy()
-            for widget in self.pg_frame.winfo_children():
-                widget.destroy()
-            # Clear the FIXED LC toolbar frame before adding a new toolbar
-            for widget in self.lc_toolbar_frame.winfo_children():
-                widget.destroy()
+            while self.index < len(self.TICs):
+                # Clear previous plots/widgets
+                for widget in self.scrollable_frame.winfo_children():
+                    widget.destroy()
+                for widget in self.pg_frame.winfo_children():
+                    widget.destroy()
+                for widget in self.lc_toolbar_frame.winfo_children():
+                    widget.destroy()
 
-            TIC = self.TICs[self.index]
-            current_number = self.index + 1
-            try:
-                lc = utils.load_lc(TIC, LCdir=self.LCdir, version=self.version,
-                                   red_name=self.red_name, return_lk=True)
-            except FileNotFoundError:
-                print(f'TIC {TIC}: LC not found.')
-                missing_data = pd.DataFrame({'TIC': [TIC], 'Classification': ['no LC'],
-                                             'Comment': ['']})
+                TIC = self.TICs[self.index]
+                current_number = self.index + 1
 
+                try:
+                    lc = utils.load_lc(TIC, LCdir=self.LCdir, version=self.version,
+                                       red_name=self.red_name, return_lk=True)
+                    pg = lc.to_periodogram()
+                    sector_borders, sectors = utils.get_sectors_dates(
+                        lc.time.value, return_numbers=True, split='Sector'
+                    )
+                    break  # Successfully loaded; proceed to plotting
+                except FileNotFoundError:
+                    print(f'TIC {TIC}: LC not found.')
+                    status = 'no LC'
+                except Exception as e:
+                    print(f'TIC {TIC}: failed to load/process ({e}).')
+                    status = f'load error: {type(e).__name__}'
+
+                missing_data = pd.DataFrame({
+                    'TIC': [TIC],
+                    'Classification': [status],
+                    'Comment': ['']
+                })
                 missing_data.to_csv(self.outname, mode='a',
                                     header=not os.path.exists(self.outname), index=False)
-
                 self.index += 1
 
-                # Check if there are more TICs to process
-                if self.index < len(self.TICs):
-                    return self.load_data()
-                else:
-                    messagebox.showinfo("Done", "All TICs reviewed. Data saved.")
-                    self.master.quit()
-                    return 0
+            # If the loop exhausted all remaining TICs
+            if self.index >= len(self.TICs):
+                self.save_button.config(state="disabled")
+                self.comment_entry.unbind('<Return>')
+                messagebox.showinfo("Done", "All TICs reviewed. Data saved.")
+                self.master.quit()
+                return
+
 
             pg = lc.to_periodogram()
             sector_borders, sectors = utils.get_sectors_dates(lc.time.value, return_numbers=True,

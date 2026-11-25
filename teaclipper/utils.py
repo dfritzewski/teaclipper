@@ -224,6 +224,8 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
 
         timedf = pd.DataFrame(rows, columns=['startJD', 'endJD', 'Sector'])
 
+    timedf.sort_values('startJD', inplace=True)
+
     # match times to LC
     # 1. find range of sectors
     tmin = np.nanmin(time)
@@ -245,10 +247,13 @@ def get_sectors_dates(time, Sectors='TESS_orbit_times.csv', split='Sector', retu
     if len(borders) == 0:
         no_border = np.array([], dtype=int)
         if return_numbers:
-            covering = timedf[(timedf.startJD <= tmin) & (timedf.endJD >= tmax)]
-            nums = [int(covering['Sector'].iloc[0])] if not covering.empty else []
+            # Calculate overlap duration between [tmin, tmax] and every sector
+            overlap = np.minimum(tmax, timedf['endJD']) - np.maximum(tmin, timedf['startJD'])
+            best_idx = overlap.idxmax()
+            nums = [int(timedf.loc[best_idx, 'Sector'])] if overlap[best_idx] > 0 else []
             return no_border, nums
         return no_border
+
 
     # add the final sector number safely
     idx_check = min(borders[-1] + 1, len(time) - 1)
