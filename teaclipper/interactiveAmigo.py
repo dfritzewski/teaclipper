@@ -543,7 +543,7 @@ class InteractivePatternPlotter:
         # get noise and snr threshold
         noise = self._calc_noise(self.freq, self.pg_residall[0], self.pg_residall[1])
         self.snr = self.amp / noise
-        self.snr_thresh = sts.ut.signal_to_noise_threshold(len(self.star_data.lc.time))
+        self.snr_thresh = sts.ut.signal_to_noise_threshold(len(self.star_data.lc.time), True)
 
         # sin_select = self.star_data.sts_res['sin_select']
         # self.b_bool = sin_select[2]                      # passed both sigma and S/N
