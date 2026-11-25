@@ -1309,6 +1309,9 @@ class InteractivePatternPlotter:
                 if line.split('=')[0].strip() == 'gyre_dir':
                     gyre_dir = line.split('=')[1].split('#')[0].strip()
 
+        if gyre_dir.startswith('$'):
+            gyre_dir = os.path.expandvars(gyre_dir)
+
         if method is None:
             method = inlist_params['numerical']['optimisation_method']
         if diagnostic is None:
