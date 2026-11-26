@@ -5,8 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "teaclipper"
 version = "0.1.0"
-acronym = "TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings"
-description = "TESS light curve detrending, prewhitening, and period-spacing pattern analysis tools."
+description = "TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
