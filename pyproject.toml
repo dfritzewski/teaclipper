@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teaclipper"
+version = "0.1.0"
+acronym = "TEss Asteroseismic Combined LIght curve Pipeline for PERiod spacings"
+description = "TESS light curve detrending, prewhitening, and period-spacing pattern analysis tools."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scipy",
+    "astropy",
+    "lightkurve",
+    "requests",
+    "amigo @ git+https://github.com/IvS-Asteroseismology/amigo.git",
+    "star_shadow @ git+https://github.com/IvS-Asteroseismology/star_shadow.git",
+    "tessutils @ git+https://github.com/IvS-Asteroseismology/tessutils.git",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["teaclipper*"]
+
+[tool.setuptools.package-data]
+teaclipper = ["*.csv"]
